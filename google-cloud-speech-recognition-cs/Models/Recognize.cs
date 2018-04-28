@@ -337,10 +337,10 @@ namespace google_cloud_speech_recognition_cs.Models
         /// <summary>
         /// Async recognition of file audio with credentials file(json)
         /// </summary>
-        /// <param name="storageUri"></param>
+        /// <param name="filePath"></param>
         /// <param name="credentialsFilePath"></param>
         /// <returns></returns>
-        public static object AsyncRecognizeGcsWordsWithCredentials(string storageUri,string credentialsFilePath,int samplingRate)
+        public static object AsyncRecognizeGcsWordsWithCredentials(string filePath,string credentialsFilePath,int samplingRate)
         {
 
             //for credetial
@@ -360,7 +360,7 @@ namespace google_cloud_speech_recognition_cs.Models
                 LanguageCode = "ja-JP",//English:en, Japanese: ja-JP
                 EnableWordTimeOffsets = true,//true: you can get timecodes of words
                 //MaxAlternatives = 3,// alternative count. this is max count. you sometimes get less number of alternatives you set. Alternatives don't have timecode
-            }, RecognitionAudio.FromStorageUri(storageUri));
+            }, RecognitionAudio.FromFile(filePath));
             longOperation = longOperation.PollUntilCompleted();
             var response = longOperation.Result;
 
