@@ -611,28 +611,5 @@ namespace google_cloud_speech_recognition_cs.Models
 
         static bool IsStorageUri(string s) => s.Substring(0, 4).ToLower() == "gs:/";
 
-        public static int Main(string[] args)
-        {
-            return (int)Parser.Default.ParseArguments<
-                SyncOptions, AsyncOptions,
-                StreamingOptions, ListenOptions,
-                RecOptions, SyncOptionsWithCreds,
-                OptionsWithContext
-                >(args).MapResult(
-                (SyncOptions opts) => IsStorageUri(opts.FilePath) ?
-                    SyncRecognizeGcs(opts.FilePath) : opts.EnableWordTimeOffsets ?
-                    SyncRecognizeWords(opts.FilePath) : SyncRecognize(opts.FilePath),
-                (AsyncOptions opts) => IsStorageUri(opts.FilePath) ?
-                    (opts.EnableWordTimeOffsets ? AsyncRecognizeGcsWords(opts.FilePath)
-                    : AsyncRecognizeGcs(opts.FilePath))
-                    : LongRunningRecognize(opts.FilePath),
-                (StreamingOptions opts) => StreamingRecognizeAsync(opts.FilePath).Result,
-                (ListenOptions opts) => StreamingMicRecognizeAsync(opts.Seconds).Result,
-                (RecOptions opts) => Rec(opts.FilePath, opts.BitRate, opts.Encoding),
-                (SyncOptionsWithCreds opts) => SyncRecognizeWithCredentials(
-                    opts.FilePath, opts.CredentialsFilePath),
-                (OptionsWithContext opts) => RecognizeWithContext(opts.FilePath, ReadPhrases()),
-                errs => 1);
-        }
     }
 }
