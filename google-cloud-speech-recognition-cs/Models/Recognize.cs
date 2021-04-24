@@ -214,12 +214,9 @@ namespace google_cloud_speech_recognition_cs.Models
 
         static object SyncRecognizeWithCredentials(string filePath, string credentialsFilePath)
         {
-            GoogleCredential googleCredential;
-            using (Stream m = new FileStream(credentialsFilePath, FileMode.Open))
-                googleCredential = GoogleCredential.FromStream(m);
-            var channel = new Grpc.Core.Channel(SpeechClient.DefaultEndpoint.Host,
-                googleCredential.ToChannelCredentials());
-            var speech = SpeechClient.Create(channel);
+            var builder = new SpeechClientBuilder();
+            builder.CredentialsPath = credentialsFilePath;
+            var speech = builder.Build();
             var response = speech.Recognize(new RecognitionConfig()
             {
                 Encoding = RecognitionConfig.Types.AudioEncoding.Linear16,
@@ -344,13 +341,9 @@ namespace google_cloud_speech_recognition_cs.Models
         {
 
             //for credetial
-            GoogleCredential googleCredential;
-            using (Stream m = new FileStream(credentialsFilePath, FileMode.Open))
-                googleCredential = GoogleCredential.FromStream(m);
-            var channel = new Grpc.Core.Channel(SpeechClient.DefaultEndpoint.Host,
-                googleCredential.ToChannelCredentials());
-
-            var speech = SpeechClient.Create(channel);
+            var builder = new SpeechClientBuilder();
+            builder.CredentialsPath = credentialsFilePath;
+            var speech = builder.Build();
 
             //recognition settings
             var longOperation = speech.LongRunningRecognize(new RecognitionConfig()
@@ -412,10 +405,10 @@ namespace google_cloud_speech_recognition_cs.Models
             // Print responses as they arrive.
             Task printResponses = Task.Run(async () =>
             {
-                while (await streamingCall.ResponseStream.MoveNext(
+                while (await streamingCall.GetResponseStream().MoveNextAsync(
                     default(CancellationToken)))
                 {
-                    foreach (var result in streamingCall.ResponseStream
+                    foreach (var result in streamingCall.GetResponseStream()
                         .Current.Results)
                     {
                         foreach (var alternative in result.Alternatives)
@@ -478,10 +471,10 @@ namespace google_cloud_speech_recognition_cs.Models
             // Print responses as they arrive.
             Task printResponses = Task.Run(async () =>
             {
-                while (await streamingCall.ResponseStream.MoveNext(
+                while (await streamingCall.GetResponseStream().MoveNextAsync(
                     default(CancellationToken)))
                 {
-                    foreach (var result in streamingCall.ResponseStream
+                    foreach (var result in streamingCall.GetResponseStream()
                         .Current.Results)
                     {
                         foreach (var alternative in result.Alternatives)
@@ -537,13 +530,9 @@ namespace google_cloud_speech_recognition_cs.Models
             }
 
             //for credetial
-            GoogleCredential googleCredential;
-            using (Stream m = new FileStream(credentialsFilePath, FileMode.Open))
-                googleCredential = GoogleCredential.FromStream(m);
-            var channel = new Grpc.Core.Channel(SpeechClient.DefaultEndpoint.Host,
-                googleCredential.ToChannelCredentials());
-
-            var speech = SpeechClient.Create(channel);
+            var builder = new SpeechClientBuilder();
+            builder.CredentialsPath = credentialsFilePath;
+            var speech = await builder.BuildAsync();
             var streamingCall = speech.StreamingRecognize();
             // Write the initial request with the config.
             await streamingCall.WriteAsync(
@@ -564,10 +553,10 @@ namespace google_cloud_speech_recognition_cs.Models
             // Print responses as they arrive.
             Task printResponses = Task.Run(async () =>
             {
-                while (await streamingCall.ResponseStream.MoveNext(
+                while (await streamingCall.GetResponseStream().MoveNextAsync(
                     default(CancellationToken)))
                 {
-                    foreach (var result in streamingCall.ResponseStream
+                    foreach (var result in streamingCall.GetResponseStream()
                         .Current.Results)
                     {
                         foreach (var alternative in result.Alternatives)
